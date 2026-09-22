@@ -424,48 +424,76 @@ select {
 }
 
 /* =========================================
-   AUDIO CONTROL
+   MUSIC MUTE / UNMUTE
 ========================================= */
 
 #ben-birthday-game .audio-toggle {
   position: absolute;
   z-index: 30;
+
   top: 92px;
   right: 18px;
 
-  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
 
-  width: 34px;
+  min-width: 112px;
   height: 34px;
 
-  padding: 0;
+  padding: 0 10px;
 
   border: 2px solid #b85cff;
-  background: rgba(11, 10, 34, 0.88);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18, 13, 48, 0.94),
+      rgba(11, 10, 34, 0.90)
+    );
 
   color: #fff;
 
   font: inherit;
-  font-size: 17px;
-  line-height: 30px;
-  text-align: center;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
 
   box-shadow:
     0 0 10px rgba(151, 67, 255, 0.35),
     3px 3px 0 rgba(0, 0, 0, 0.55);
 
+  text-shadow: 1px 1px 0 #000;
+
   cursor: pointer;
   pointer-events: auto;
 
-  image-rendering: pixelated;
+  transition:
+    opacity 120ms ease,
+    background 120ms ease;
 }
 
 #ben-birthday-game .audio-toggle:hover {
-  background: rgba(151, 67, 255, 0.35);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(151, 67, 255, 0.45),
+      rgba(35, 20, 73, 0.94)
+    );
+}
+
+#ben-birthday-game .audio-icon {
+  font-size: 16px;
+  line-height: 1;
 }
 
 #ben-birthday-game .audio-toggle.is-muted {
-  opacity: 0.55;
+  opacity: 0.68;
+}
+
+#ben-birthday-game .audio-toggle.is-muted .audio-icon {
+  color: #9991ab;
 }
 
 @media (max-width: 760px) {
@@ -473,11 +501,18 @@ select {
     top: 72px;
     right: 8px;
 
-    width: 28px;
+    min-width: 88px;
     height: 28px;
 
-    font-size: 14px;
-    line-height: 24px;
+    padding: 0 7px;
+
+    gap: 5px;
+
+    font-size: 8px;
+  }
+
+  #ben-birthday-game .audio-icon {
+    font-size: 12px;
   }
 }
 

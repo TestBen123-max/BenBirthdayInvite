@@ -21,7 +21,13 @@
     ? gameOverScreen.querySelector(".death")
     : null;
   const audioToggle =
-  document.querySelector("#audio-toggle");
+    document.querySelector("#audio-toggle");
+
+  const audioIcon =
+    audioToggle?.querySelector(".audio-icon");
+
+  const audioLabel =
+    audioToggle?.querySelector(".audio-label");
 
   /* =========================================================
      ASSETS
@@ -135,62 +141,69 @@ function startMusic() {
 }
 
 
+function updateAudioButton() {
+  if (!audioToggle) {
+    return;
+  }
+
+  if (musicMuted) {
+    audioToggle.classList.add("is-muted");
+
+    if (audioIcon) {
+      audioIcon.textContent = "×";
+    }
+
+    if (audioLabel) {
+      audioLabel.textContent = "MUTED";
+    }
+
+    audioToggle.setAttribute(
+      "aria-label",
+      "Unmute music"
+    );
+
+    audioToggle.title =
+      "Unmute music";
+  } else {
+    audioToggle.classList.remove("is-muted");
+
+    if (audioIcon) {
+      audioIcon.textContent = "♪";
+    }
+
+    if (audioLabel) {
+      audioLabel.textContent = "MUSIC ON";
+    }
+
+    audioToggle.setAttribute(
+      "aria-label",
+      "Mute music"
+    );
+
+    audioToggle.title =
+      "Mute music";
+  }
+}
+
+
 function toggleMusic() {
-  musicMuted =
-    !musicMuted;
+  musicMuted = !musicMuted;
 
   if (musicMuted) {
     fadeMusicTo(
       0,
       250
     );
-
-    if (audioToggle) {
-      audioToggle.classList.add(
-        "is-muted"
-      );
-
-      audioToggle.textContent =
-        "×";
-
-      audioToggle.setAttribute(
-        "aria-label",
-        "Unmute music"
-      );
-
-      audioToggle.title =
-        "Unmute music";
-    }
   } else {
-    /*
-      Clicking Unmute itself counts as a user
-      interaction, so we can safely start audio
-      here if it has not begun yet.
-    */
     startMusic();
 
     fadeMusicTo(
       MUSIC_VOLUME,
       350
     );
-
-    if (audioToggle) {
-      audioToggle.classList.remove(
-        "is-muted"
-      );
-
-      audioToggle.textContent =
-        "♪";
-
-      audioToggle.setAttribute(
-        "aria-label",
-        "Mute music"
-      );
-
-      audioToggle.title =
-        "Mute music";
-    }
   }
+
+  updateAudioButton();
 }
 
 
@@ -976,6 +989,8 @@ if (audioToggle) {
     hideScreen(gameOverScreen);
     hideScreen(winScreen);
     showScreen(startScreen);
+
+    updateAudioButton();
 
     game.focus();
   }
