@@ -51,7 +51,8 @@ const HIT_SFX_URL =
 
 const MUSIC_VOLUME = 0.30;
 const JUMP_SFX_VOLUME = 0.60;
-const HIT_SFX_VOLUME = 0.70;
+const HIT_SFX_VOLUME = 0.85;
+const WIN_MUSIC_SECONDS = 10;
 
 const music =
   new Audio(MUSIC_URL);
@@ -79,6 +80,7 @@ music.volume = 0;
 let musicStarted = false;
 let audioMuted = false;
 let musicFadeFrame = null;
+let winMusicActive = false;
 
 
 function fadeMusicTo(
@@ -154,6 +156,61 @@ function startMusic() {
 
       musicStarted = false;
     });
+}
+
+
+function playWinMusic() {
+  winMusicActive = true;
+  music.loop = false;
+
+  const seekToWinSection = () => {
+    if (Number.isFinite(music.duration) && music.duration > 0) {
+      music.currentTime = Math.max(0, music.duration - WIN_MUSIC_SECONDS);
+    }
+
+    if (!audioMuted) {
+      music.volume = MUSIC_VOLUME;
+    }
+
+    const playPromise = music.play();
+
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch((error) => {
+        console.warn("Win music could not play:", error);
+      });
+    }
+  };
+
+  if (music.readyState >= 1) {
+    seekToWinSection();
+  } else {
+    music.addEventListener("loadedmetadata", seekToWinSection, { once: true });
+  }
+}
+
+
+function restoreGameplayMusicAfterWin() {
+  if (!winMusicActive) {
+    return;
+  }
+
+  winMusicActive = false;
+  music.loop = true;
+  music.currentTime = 0;
+
+  if (!audioMuted) {
+    music.volume = 0;
+
+    const playPromise = music.play();
+
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch((error) => {
+        console.warn("Music could not restart:", error);
+      });
+    }
+
+    fadeMusicTo(MUSIC_VOLUME, 400);
+  }
 }
 
 
@@ -812,6 +869,8 @@ if (audioToggle) {
 
   function resetGame() {
     cancelAnimationFrame(animationFrame);
+
+    restoreGameplayMusicAfterWin();
     clearTimeout(endScreenTimer);
     clearInterval(deathAnimation);
     clearInterval(winAnimation);
@@ -926,12 +985,9 @@ if (audioToggle) {
     if (!running) return;
 
     running = false;
-    if (!audioMuted) {
-  fadeMusicTo(
-    0.18,
-    800
-  );
-}
+
+    playWinMusic();
+
     cancelAnimationFrame(animationFrame);
     clearTimeout(endScreenTimer);
     clearInterval(deathAnimation);
