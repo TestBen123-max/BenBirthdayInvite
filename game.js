@@ -282,21 +282,23 @@ function updateAudioButton() {
 }
 
 
+function applyAudioMutedState() {
+  music.muted = audioMuted;
+  jumpSfx.muted = audioMuted;
+  hitSfx.muted = audioMuted;
+}
+
+
 function toggleMusic() {
   audioMuted = !audioMuted;
+  applyAudioMutedState();
 
   if (audioMuted) {
-    fadeMusicTo(
-      0,
-      250
-    );
+    cancelAnimationFrame(musicFadeFrame);
+    music.volume = 0;
   } else {
     startMusic();
-
-    fadeMusicTo(
-      MUSIC_VOLUME,
-      350
-    );
+    fadeMusicTo(MUSIC_VOLUME, 350);
   }
 
   updateAudioButton();
@@ -304,16 +306,24 @@ function toggleMusic() {
 
 
 if (audioToggle) {
-  // The game listens for pointerdown, so stop that event here too.
-  // Otherwise clicking the audio button also makes Ben jump / starts the game.
+  /*
+    Toggle directly from pointerdown. On iPhone this is more reliable
+    than waiting for the synthetic click that follows a touch.
+  */
   audioToggle.addEventListener("pointerdown", (event) => {
-    event.stopPropagation();
-  });
-
-  audioToggle.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
     toggleMusic();
+  });
+
+  /* Preserve keyboard activation without double-toggling mouse/touch input. */
+  audioToggle.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (event.detail === 0) {
+      toggleMusic();
+    }
   });
 }
 
@@ -684,7 +694,16 @@ if (audioToggle) {
     const element = document.createElement("div");
     element.className = `obstacle obstacle--${def.size || "medium"}`;
 
+    /*
+      Render the atlas directly at the obstacle's final pixel size instead
+      of scaling a 128px layer with a transform. This avoids intermittent
+      iOS/Safari clipping and half-sprite compositing artifacts.
+    */
     const displaySize = Math.round(128 * def.scale);
+    const atlasSize = displaySize * 4;
+    const col = def.cell % 4;
+    const row = Math.floor(def.cell / 4);
+
     element.style.width = `${displaySize}px`;
     element.style.height = `${displaySize}px`;
 
@@ -694,11 +713,12 @@ if (audioToggle) {
 
     const sprite = document.createElement("div");
     sprite.className = "obstacle-sprite";
-
-    const offset = getCellOffset(def.cell);
+    sprite.style.width = `${displaySize}px`;
+    sprite.style.height = `${displaySize}px`;
     sprite.style.backgroundImage = `url("${OBSTACLE_ATLAS_URL}")`;
-    sprite.style.backgroundPosition = `${offset.x}px ${offset.y}px`;
-    sprite.style.transform = `translateX(-50%) scale(${def.scale})`;
+    sprite.style.backgroundSize = `${atlasSize}px ${atlasSize}px`;
+    sprite.style.backgroundPosition =
+      `${-(col * displaySize)}px ${-(row * displaySize)}px`;
 
     element.appendChild(label);
     element.appendChild(sprite);
@@ -766,7 +786,7 @@ if (audioToggle) {
       const bob = Math.sin(obstacle.wobblePhase) * 2;
 
       obstacle.sprite.style.transform =
-        `translateX(-50%) translateY(${bob}px) scale(${obstacle.def.scale})`;
+        `translateY(${bob}px)`;
     });
 
     obstacles = obstacles.filter((obstacle) => {
@@ -1071,12 +1091,22 @@ if (audioToggle) {
   }
 
   function handlePointerDown(event) {
+    /* Audio control owns its own pointer gesture. */
+    if (event.target.closest("#audio-toggle")) {
+      return;
+    }
+
     event.preventDefault();
     jump();
   }
 
+  function preventGameSelection(event) {
+    event.preventDefault();
+  }
+
   document.addEventListener("keydown", handleKeyDown);
-  game.addEventListener("pointerdown", handlePointerDown);
+  game.addEventListener("pointerdown", handlePointerDown, { passive: false });
+  game.addEventListener("selectstart", preventGameSelection);
 
   /* =========================================================
      INITIALIZE
@@ -1096,6 +1126,7 @@ if (audioToggle) {
     hideScreen(winScreen);
     showScreen(startScreen);
 
+    applyAudioMutedState();
     updateAudioButton();
 
     game.focus();
@@ -1120,6 +1151,7 @@ if (audioToggle) {
 
       document.removeEventListener("keydown", handleKeyDown);
       game.removeEventListener("pointerdown", handlePointerDown);
+      game.removeEventListener("selectstart", preventGameSelection);
     }
   };
 

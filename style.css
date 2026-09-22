@@ -58,8 +58,21 @@ select {
   outline: none;
   cursor: pointer;
   user-select: none;
-  touch-action: manipulation;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  overscroll-behavior: contain;
 }
+
+#ben-birthday-game .game *,
+#ben-birthday-game .screen,
+#ben-birthday-game .panel {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
 
 #ben-birthday-game .game:focus-visible {
   box-shadow:
@@ -468,6 +481,11 @@ select {
 
   cursor: pointer;
   pointer-events: auto;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 
   transition:
     opacity 120ms ease,
@@ -529,16 +547,15 @@ select {
 
 #ben-birthday-game .obstacle-sprite {
   position: absolute;
-  left: 50%;
+  left: 0;
   bottom: 0;
-  width: 128px;
-  height: 128px;
   background-image: url("./assets/obstacles.png");
   background-repeat: no-repeat;
-  background-size: 512px 512px;
   image-rendering: pixelated;
   transform-origin: center bottom;
   will-change: transform;
+  contain: paint;
+  overflow: hidden;
 }
 
 #ben-birthday-game .obstacle-label {
