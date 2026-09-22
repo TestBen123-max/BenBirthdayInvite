@@ -20,6 +20,8 @@
   const deathText = gameOverScreen
     ? gameOverScreen.querySelector(".death")
     : null;
+  const audioToggle =
+  document.querySelector("#audio-toggle");
 
   /* =========================================================
      ASSETS
