@@ -31,6 +31,186 @@ const OBSTACLE_ATLAS_URL =
   "./assets/obstacles.png";
 
   /* =========================================================
+   AUDIO
+   ========================================================= */
+
+const MUSIC_URL =
+  "./assets/audio/face-the-facts.mp3";
+
+const MUSIC_VOLUME = 0.30;
+
+const music =
+  new Audio(MUSIC_URL);
+
+music.preload = "auto";
+
+/*
+  The actual game is short enough that the track
+  should normally not reach the end, but looping
+  gives us a safe fallback if someone spends a
+  long time retrying.
+*/
+music.loop = true;
+
+music.volume = 0;
+
+let musicStarted = false;
+let musicMuted = false;
+let musicFadeFrame = null;
+
+
+function fadeMusicTo(
+  targetVolume,
+  duration = 600
+) {
+  cancelAnimationFrame(
+    musicFadeFrame
+  );
+
+  const startVolume =
+    music.volume;
+
+  const difference =
+    targetVolume - startVolume;
+
+  const startTime =
+    performance.now();
+
+
+  function fade(now) {
+    const progress =
+      Math.min(
+        1,
+        (now - startTime) /
+          duration
+      );
+
+    music.volume =
+      startVolume +
+      difference * progress;
+
+    if (progress < 1) {
+      musicFadeFrame =
+        requestAnimationFrame(fade);
+    }
+  }
+
+  musicFadeFrame =
+    requestAnimationFrame(fade);
+}
+
+
+function startMusic() {
+  if (musicStarted) {
+    if (!musicMuted) {
+      fadeMusicTo(
+        MUSIC_VOLUME,
+        400
+      );
+    }
+
+    return;
+  }
+
+  musicStarted = true;
+
+  music
+    .play()
+    .then(() => {
+      if (!musicMuted) {
+        fadeMusicTo(
+          MUSIC_VOLUME,
+          700
+        );
+      }
+    })
+    .catch((error) => {
+      console.warn(
+        "Music could not start:",
+        error
+      );
+
+      musicStarted = false;
+    });
+}
+
+
+function toggleMusic() {
+  musicMuted =
+    !musicMuted;
+
+  if (musicMuted) {
+    fadeMusicTo(
+      0,
+      250
+    );
+
+    if (audioToggle) {
+      audioToggle.classList.add(
+        "is-muted"
+      );
+
+      audioToggle.textContent =
+        "×";
+
+      audioToggle.setAttribute(
+        "aria-label",
+        "Unmute music"
+      );
+
+      audioToggle.title =
+        "Unmute music";
+    }
+  } else {
+    /*
+      Clicking Unmute itself counts as a user
+      interaction, so we can safely start audio
+      here if it has not begun yet.
+    */
+    startMusic();
+
+    fadeMusicTo(
+      MUSIC_VOLUME,
+      350
+    );
+
+    if (audioToggle) {
+      audioToggle.classList.remove(
+        "is-muted"
+      );
+
+      audioToggle.textContent =
+        "♪";
+
+      audioToggle.setAttribute(
+        "aria-label",
+        "Mute music"
+      );
+
+      audioToggle.title =
+        "Mute music";
+    }
+  }
+}
+
+
+if (audioToggle) {
+  audioToggle.addEventListener(
+    "click",
+    (event) => {
+      /*
+        Prevent clicking the music control
+        from also triggering the game's
+        pointer-to-jump handler.
+      */
+      event.stopPropagation();
+
+      toggleMusic();
+    }
+  );
+}
+
+  /* =========================================================
      GAME SETTINGS
      ========================================================= */
 
