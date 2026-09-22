@@ -785,6 +785,16 @@ if (audioToggle) {
 
     game.focus();
     animationFrame = requestAnimationFrame(gameLoop);
+
+    if (
+  musicStarted &&
+  !musicMuted
+) {
+  fadeMusicTo(
+    MUSIC_VOLUME,
+    400
+  );
+}
   }
 
   /* =========================================================
