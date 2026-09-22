@@ -429,10 +429,11 @@ select {
 
 #ben-birthday-game .audio-toggle {
   position: absolute;
-  top: 100%;
-  right: 0;
+  z-index: 30;
+  top: 92px;
+  right: 18px;
 
-  margin-top: 8px;
+  margin: 0;
 
   width: 34px;
   height: 34px;
@@ -469,13 +470,14 @@ select {
 
 @media (max-width: 760px) {
   #ben-birthday-game .audio-toggle {
+    top: 72px;
+    right: 8px;
+
     width: 28px;
     height: 28px;
 
     font-size: 14px;
     line-height: 24px;
-
-    margin-top: 6px;
   }
 }
 
