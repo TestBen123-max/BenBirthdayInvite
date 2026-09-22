@@ -791,17 +791,26 @@ if (audioToggle) {
      INPUT / JUMP
      ========================================================= */
 
-  function jump() {
-    if (!running) {
-      resetGame();
-      return;
-    }
+ function jump() {
+  /*
+    Space/tap is a genuine browser user
+    interaction, so this is where music
+    is allowed to begin.
+  */
+  startMusic();
 
-    if (y <= 2) {
-      velocityY = JUMP_VELOCITY;
-      setBenState("jump");
-    }
+  if (!running) {
+    resetGame();
+    return;
   }
+
+  if (y <= 2) {
+    velocityY =
+      JUMP_VELOCITY;
+
+    setBenState("jump");
+  }
+}
 
   /* =========================================================
      GAME OVER / WIN
@@ -846,6 +855,12 @@ if (audioToggle) {
     if (!running) return;
 
     running = false;
+    if (!musicMuted) {
+  fadeMusicTo(
+    0.18,
+    800
+  );
+}
     cancelAnimationFrame(animationFrame);
     clearTimeout(endScreenTimer);
     clearInterval(deathAnimation);
