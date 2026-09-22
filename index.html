@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ben's Birthday Escape</title>
+  <meta name="description" content="Survive the workday. Reach Barcade.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page-shell">
+    <div id="ben-birthday-game">
+      <div class="game" tabindex="0" aria-label="Ben's Birthday Escape">
+        <div class="world" aria-hidden="true">
+          <div class="scrolling-background"></div>
+          <div class="ground"></div>
+        </div>
+
+        <div class="hud" aria-live="polite">
+          <div class="hud-left">
+            BEN<br>
+            LVL 37 &nbsp; ♥ ♥ ♥
+          </div>
+
+          <div class="hud-right">
+            MISSION: REACH BARCADE<br>
+            FRI OCT 9 • 148 W 24TH ST
+          </div>
+        </div>
+
+        <div class="runner runner-idle" aria-label="Ben"></div>
+
+        <div class="screen start">
+          <div class="panel">
+            <h1>BEN'S BIRTHDAY ESCAPE</h1>
+            <div class="big">PRESS SPACE TO AVOID WORK</div>
+            <p>Survive the workday. Reach Barcade.</p>
+            <p class="blink">SPACE TO START</p>
+          </div>
+        </div>
+
+        <div class="screen game-over">
+          <div class="panel">
+            <h1>MEETING ACCEPTED.</h1>
+            <p class="death">You got pulled into work.</p>
+            <p class="blink">PRESS SPACE TO TRY AGAIN</p>
+          </div>
+        </div>
+
+        <div class="screen win">
+          <div class="panel">
+            <h1>WORKDAY ESCAPED.</h1>
+            <div class="big">
+              BARCADE • FRIDAY, OCT 9<br>
+              148 W 24TH ST
+            </div>
+            <p>YOU MADE IT! NOW COME FOR REAL!</p>
+            <p class="blink">PRESS SPACE TO PLAY AGAIN</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">SPACEBAR TO JUMP</div>
+    </div>
+  </main>
+
+  <script src="game.js" defer></script>
+</body>
+</html>
