@@ -29,6 +29,14 @@
   const audioLabel =
     audioToggle?.querySelector(".audio-label");
 
+  /*
+    Keep obstacle sprites static on touch/coarse-pointer devices to avoid
+    iOS/Safari atlas compositing glitches. Desktop keeps the subtle bob.
+  */
+  const REDUCED_OBSTACLE_MOTION =
+    window.matchMedia("(pointer: coarse)").matches ||
+    window.matchMedia("(max-width: 760px)").matches;
+
   /* =========================================================
      ASSETS
      ========================================================= */
@@ -291,18 +299,40 @@ function applyAudioMutedState() {
 
 function toggleMusic() {
   audioMuted = !audioMuted;
+
+  /*
+    Stop any in-progress volume automation first so mute/unmute cannot
+    inherit a stale fade state. The native muted property is the source
+    of truth for all three audio elements.
+  */
+  cancelAnimationFrame(musicFadeFrame);
   applyAudioMutedState();
 
-  if (audioMuted) {
-    cancelAnimationFrame(musicFadeFrame);
-    music.volume = 0;
-  } else {
-    startMusic();
-    fadeMusicTo(MUSIC_VOLUME, 350);
+  if (!audioMuted) {
+    /* Restore an audible volume immediately. */
+    music.volume = MUSIC_VOLUME;
+
+    /*
+      If music had already been started but the browser paused it, resume
+      from the same position. Otherwise start it from the normal user gesture.
+    */
+    if (musicStarted) {
+      if (music.paused && !music.ended) {
+        const playPromise = music.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch((error) => {
+            console.warn("Music could not resume:", error);
+          });
+        }
+      }
+    } else {
+      startMusic();
+    }
   }
 
   updateAudioButton();
 }
+
 
 
 if (audioToggle) {
