@@ -553,9 +553,6 @@ select {
   background-repeat: no-repeat;
   image-rendering: pixelated;
   transform-origin: center bottom;
-  will-change: transform;
-  contain: paint;
-  overflow: hidden;
 }
 
 #ben-birthday-game .obstacle-label {
@@ -584,6 +581,16 @@ select {
 
 #ben-birthday-game .obstacle--small .obstacle-label {
   max-width: 120px;
+}
+
+
+@media (max-width: 760px), (pointer: coarse) {
+  #ben-birthday-game .obstacle-sprite {
+    /* Keep the atlas layer on the normal paint path on iPhone/iPad.
+       Avoiding a transformed GPU layer prevents intermittent half/blank sprites. */
+    transform: none !important;
+    will-change: auto;
+  }
 }
 
 /* ================================

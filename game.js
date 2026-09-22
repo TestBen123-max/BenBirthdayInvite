@@ -782,11 +782,15 @@ if (audioToggle) {
       obstacle.x -= speed * delta;
       obstacle.element.style.left = `${obstacle.x}px`;
 
-      obstacle.wobblePhase += delta * 5;
-      const bob = Math.sin(obstacle.wobblePhase) * 2;
-
-      obstacle.sprite.style.transform =
-        `translateY(${bob}px)`;
+      if (REDUCED_OBSTACLE_MOTION) {
+        // Avoid iOS/Safari background-image compositing glitches that can
+        // make atlas sprites appear clipped or disappear mid-scroll.
+        obstacle.sprite.style.transform = "none";
+      } else {
+        obstacle.wobblePhase += delta * 5;
+        const bob = Math.sin(obstacle.wobblePhase) * 2;
+        obstacle.sprite.style.transform = `translateY(${bob}px)`;
+      }
     });
 
     obstacles = obstacles.filter((obstacle) => {
