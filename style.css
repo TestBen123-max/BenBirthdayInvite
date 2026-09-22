@@ -96,25 +96,248 @@ select {
   box-shadow: 0 8px var(--ground-shadow);
 }
 
+/* =========================================
+   HUD
+========================================= */
+
 #ben-birthday-game .hud {
   position: absolute;
   z-index: 10;
-  top: 12px;
-  left: 14px;
-  right: 14px;
-  display: flex;
-  justify-content: space-between;
+
+  top: 14px;
+  left: 18px;
+  right: 18px;
+
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
   gap: 20px;
+
   color: #fff;
-  font-size: clamp(11px, 1.15vw, 16px);
-  line-height: 1.35;
+
+  pointer-events: none;
+
   font-weight: 800;
   text-shadow: 2px 2px 0 #000;
-  pointer-events: none;
 }
 
-#ben-birthday-game .hud-right {
-  text-align: right;
+
+/* =========================================
+   HUD CARDS
+========================================= */
+
+#ben-birthday-game .hud-card {
+  position: relative;
+
+  padding: 10px 16px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18, 13, 48, 0.92),
+      rgba(11, 10, 34, 0.86)
+    );
+
+  border: 2px solid #b85cff;
+
+  box-shadow:
+    0 0 0 2px rgba(74, 41, 157, 0.65),
+    0 0 14px rgba(151, 67, 255, 0.35),
+    4px 4px 0 rgba(0, 0, 0, 0.65);
+
+  font-size: clamp(11px, 1vw, 15px);
+  line-height: 1.28;
+
+  backdrop-filter: blur(3px);
+}
+
+
+/* little pixel-corner accents */
+
+#ben-birthday-game .hud-card::before,
+#ben-birthday-game .hud-card::after {
+  content: "";
+  position: absolute;
+
+  width: 7px;
+  height: 7px;
+
+  border-color: #efc5ff;
+}
+
+#ben-birthday-game .hud-card::before {
+  top: -4px;
+  left: -4px;
+
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+
+#ben-birthday-game .hud-card::after {
+  right: -4px;
+  bottom: -4px;
+
+  border-right: 2px solid;
+  border-bottom: 2px solid;
+}
+
+
+/* =========================================
+   PLAYER
+========================================= */
+
+#ben-birthday-game .hud-player {
+  min-width: 145px;
+}
+
+#ben-birthday-game .hud-name {
+  font-size: clamp(15px, 1.4vw, 21px);
+  letter-spacing: 0.04em;
+}
+
+#ben-birthday-game .hud-level {
+  margin-top: 2px;
+
+  font-size: clamp(12px, 1.15vw, 17px);
+  letter-spacing: 0.08em;
+
+  color: #f0eef5;
+}
+
+
+/* =========================================
+   CENTER TITLE
+========================================= */
+
+#ben-birthday-game .hud-title {
+  justify-self: center;
+
+  padding-top: 3px;
+
+  text-align: center;
+  white-space: nowrap;
+
+  font-size: clamp(14px, 1.7vw, 25px);
+  line-height: 1;
+
+  letter-spacing: 0.08em;
+
+  color: #fff;
+
+  text-shadow:
+    2px 2px 0 #150d27,
+    0 0 12px rgba(151, 67, 255, 0.55);
+}
+
+#ben-birthday-game .hud-title span {
+  display: block;
+
+  margin-top: 8px;
+
+  font-size: 0.48em;
+  letter-spacing: 0.32em;
+
+  color: #d4c7ff;
+}
+
+
+/* =========================================
+   MISSION / INVITE DETAILS
+========================================= */
+
+#ben-birthday-game .hud-mission {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  min-width: 285px;
+
+  padding-right: 20px;
+
+  font-size: clamp(11px, 1.05vw, 16px);
+  letter-spacing: 0.04em;
+}
+
+#ben-birthday-game .hud-pin {
+  margin-top: 3px;
+
+  color: #ff47f7;
+
+  font-size: 18px;
+
+  text-shadow:
+    0 0 8px rgba(255, 71, 247, 0.8);
+}
+
+#ben-birthday-game .hud-mission-title {
+  margin-bottom: 3px;
+
+  font-size: 1.05em;
+  font-weight: 900;
+
+  color: #fff;
+}
+
+
+/* =========================================
+   RESPONSIVE HUD
+========================================= */
+
+@media (max-width: 760px) {
+
+  #ben-birthday-game .hud {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+
+    grid-template-columns: auto 1fr;
+    gap: 8px;
+  }
+
+  /*
+    Invitation details are more important
+    than repeating the game title on small screens.
+  */
+
+  #ben-birthday-game .hud-title {
+    display: none;
+  }
+
+  #ben-birthday-game .hud-card {
+    padding: 7px 9px;
+
+    font-size: 9px;
+
+    border-width: 1px;
+  }
+
+  #ben-birthday-game .hud-player {
+    min-width: 76px;
+  }
+
+  #ben-birthday-game .hud-name {
+    font-size: 12px;
+  }
+
+  #ben-birthday-game .hud-level {
+    font-size: 9px;
+  }
+
+  #ben-birthday-game .hud-mission {
+    justify-self: end;
+
+    min-width: 0;
+    max-width: 210px;
+
+    gap: 6px;
+
+    font-size: 9px;
+    line-height: 1.25;
+  }
+
+  #ben-birthday-game .hud-pin {
+    font-size: 11px;
+  }
 }
 
 #ben-birthday-game .runner {
