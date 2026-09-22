@@ -43,12 +43,28 @@ const OBSTACLE_ATLAS_URL =
 const MUSIC_URL =
   "./assets/Zane Little - Face The Facts.mp3";
 
+const JUMP_SFX_URL =
+  "./assets/Jump.mp3";
+
+const HIT_SFX_URL =
+  "./assets/Hit.mp3";
+
 const MUSIC_VOLUME = 0.30;
+const JUMP_SFX_VOLUME = 0.60;
+const HIT_SFX_VOLUME = 0.70;
 
 const music =
   new Audio(MUSIC_URL);
 
+const jumpSfx =
+  new Audio(JUMP_SFX_URL);
+
+const hitSfx =
+  new Audio(HIT_SFX_URL);
+
 music.preload = "auto";
+jumpSfx.preload = "auto";
+hitSfx.preload = "auto";
 
 /*
   The actual game is short enough that the track
@@ -61,7 +77,7 @@ music.loop = true;
 music.volume = 0;
 
 let musicStarted = false;
-let musicMuted = false;
+let audioMuted = false;
 let musicFadeFrame = null;
 
 
@@ -108,7 +124,7 @@ function fadeMusicTo(
 
 function startMusic() {
   if (musicStarted) {
-    if (!musicMuted) {
+    if (!audioMuted) {
       fadeMusicTo(
         MUSIC_VOLUME,
         400
@@ -123,7 +139,7 @@ function startMusic() {
   music
     .play()
     .then(() => {
-      if (!musicMuted) {
+      if (!audioMuted) {
         fadeMusicTo(
           MUSIC_VOLUME,
           700
@@ -141,12 +157,35 @@ function startMusic() {
 }
 
 
+function playSfx(sound, volume) {
+  if (audioMuted) {
+    return;
+  }
+
+  try {
+    sound.pause();
+    sound.currentTime = 0;
+    sound.volume = volume;
+
+    const playPromise = sound.play();
+
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch((error) => {
+        console.warn("SFX could not play:", error);
+      });
+    }
+  } catch (error) {
+    console.warn("SFX could not play:", error);
+  }
+}
+
+
 function updateAudioButton() {
   if (!audioToggle) {
     return;
   }
 
-  if (musicMuted) {
+  if (audioMuted) {
     audioToggle.classList.add("is-muted");
 
     if (audioIcon) {
@@ -159,11 +198,11 @@ function updateAudioButton() {
 
     audioToggle.setAttribute(
       "aria-label",
-      "Unmute music"
+      "Unmute sound"
     );
 
     audioToggle.title =
-      "Unmute music";
+      "Unmute sound";
   } else {
     audioToggle.classList.remove("is-muted");
 
@@ -172,24 +211,24 @@ function updateAudioButton() {
     }
 
     if (audioLabel) {
-      audioLabel.textContent = "MUSIC ON";
+      audioLabel.textContent = "SOUND ON";
     }
 
     audioToggle.setAttribute(
       "aria-label",
-      "Mute music"
+      "Mute sound"
     );
 
     audioToggle.title =
-      "Mute music";
+      "Mute sound";
   }
 }
 
 
 function toggleMusic() {
-  musicMuted = !musicMuted;
+  audioMuted = !audioMuted;
 
-  if (musicMuted) {
+  if (audioMuted) {
     fadeMusicTo(
       0,
       250
@@ -753,6 +792,12 @@ if (audioToggle) {
           (overlapTop + overlapBottom) / 2 - gameRect.top;
 
         showImpactEffect(impactX, impactY);
+
+        playSfx(
+          hitSfx,
+          HIT_SFX_VOLUME
+        );
+
         gameOver();
         return true;
       }
@@ -799,7 +844,7 @@ if (audioToggle) {
 
     if (
   musicStarted &&
-  !musicMuted
+  !audioMuted
 ) {
   fadeMusicTo(
     MUSIC_VOLUME,
@@ -828,6 +873,11 @@ if (audioToggle) {
   if (y <= 2) {
     velocityY =
       JUMP_VELOCITY;
+
+    playSfx(
+      jumpSfx,
+      JUMP_SFX_VOLUME
+    );
 
     setBenState("jump");
   }
@@ -876,7 +926,7 @@ if (audioToggle) {
     if (!running) return;
 
     running = false;
-    if (!musicMuted) {
+    if (!audioMuted) {
   fadeMusicTo(
     0.18,
     800
