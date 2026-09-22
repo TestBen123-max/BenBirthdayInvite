@@ -423,6 +423,62 @@ select {
   text-align: center;
 }
 
+/* =========================================
+   AUDIO CONTROL
+========================================= */
+
+#ben-birthday-game .audio-toggle {
+  position: absolute;
+  top: 100%;
+  right: 0;
+
+  margin-top: 8px;
+
+  width: 34px;
+  height: 34px;
+
+  padding: 0;
+
+  border: 2px solid #b85cff;
+  background: rgba(11, 10, 34, 0.88);
+
+  color: #fff;
+
+  font: inherit;
+  font-size: 17px;
+  line-height: 30px;
+  text-align: center;
+
+  box-shadow:
+    0 0 10px rgba(151, 67, 255, 0.35),
+    3px 3px 0 rgba(0, 0, 0, 0.55);
+
+  cursor: pointer;
+  pointer-events: auto;
+
+  image-rendering: pixelated;
+}
+
+#ben-birthday-game .audio-toggle:hover {
+  background: rgba(151, 67, 255, 0.35);
+}
+
+#ben-birthday-game .audio-toggle.is-muted {
+  opacity: 0.55;
+}
+
+@media (max-width: 760px) {
+  #ben-birthday-game .audio-toggle {
+    width: 28px;
+    height: 28px;
+
+    font-size: 14px;
+    line-height: 24px;
+
+    margin-top: 6px;
+  }
+}
+
 /* ================================
    SPRITE OBSTACLES
 ================================ */
