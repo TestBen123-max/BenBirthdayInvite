@@ -25,8 +25,8 @@
      ASSETS
      ========================================================= */
 
-  const OBSTACLE_ATLAS_URL =
-    "https://freight.cargo.site/t/original/i/Y3144400352624815716754831541258/obstacle_atlas_v4_512x512-copy.png";
+const OBSTACLE_ATLAS_URL =
+  "./assets/obstacles.png";
 
   /* =========================================================
      GAME SETTINGS
