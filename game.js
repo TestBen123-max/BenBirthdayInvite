@@ -44,6 +44,10 @@
 const OBSTACLE_ATLAS_URL =
   "./assets/obstacles.png";
 
+/* Warm the browser cache before the first obstacle needs the atlas. */
+const obstacleAtlasPreload = new Image();
+obstacleAtlasPreload.src = OBSTACLE_ATLAS_URL;
+
   /* =========================================================
    AUDIO
    ========================================================= */
@@ -725,9 +729,10 @@ if (audioToggle) {
     element.className = `obstacle obstacle--${def.size || "medium"}`;
 
     /*
-      Render the atlas directly at the obstacle's final pixel size instead
-      of scaling a 128px layer with a transform. This avoids intermittent
-      iOS/Safari clipping and half-sprite compositing artifacts.
+      Use a real <img> clipped inside a fixed viewport instead of a CSS
+      background-position slice. iOS Safari can intermittently drop or clip
+      moving background-image atlas layers; an image element is much more
+      reliable while preserving the same 4×4 / 128px-cell atlas.
     */
     const displaySize = Math.round(128 * def.scale);
     const atlasSize = displaySize * 4;
@@ -745,11 +750,19 @@ if (audioToggle) {
     sprite.className = "obstacle-sprite";
     sprite.style.width = `${displaySize}px`;
     sprite.style.height = `${displaySize}px`;
-    sprite.style.backgroundImage = `url("${OBSTACLE_ATLAS_URL}")`;
-    sprite.style.backgroundSize = `${atlasSize}px ${atlasSize}px`;
-    sprite.style.backgroundPosition =
-      `${-(col * displaySize)}px ${-(row * displaySize)}px`;
 
+    const atlasImage = document.createElement("img");
+    atlasImage.className = "obstacle-atlas-image";
+    atlasImage.src = OBSTACLE_ATLAS_URL;
+    atlasImage.alt = "";
+    atlasImage.draggable = false;
+    atlasImage.decoding = "async";
+    atlasImage.style.width = `${atlasSize}px`;
+    atlasImage.style.height = `${atlasSize}px`;
+    atlasImage.style.left = `${-(col * displaySize)}px`;
+    atlasImage.style.top = `${-(row * displaySize)}px`;
+
+    sprite.appendChild(atlasImage);
     element.appendChild(label);
     element.appendChild(sprite);
 
