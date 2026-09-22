@@ -35,7 +35,7 @@ const OBSTACLE_ATLAS_URL =
    ========================================================= */
 
 const MUSIC_URL =
-  "./assets/audio/face-the-facts.mp3";
+  "./assets/Zane Little - Face The Facts.mp3";
 
 const MUSIC_VOLUME = 0.30;
 
@@ -195,19 +195,17 @@ function toggleMusic() {
 
 
 if (audioToggle) {
-  audioToggle.addEventListener(
-    "click",
-    (event) => {
-      /*
-        Prevent clicking the music control
-        from also triggering the game's
-        pointer-to-jump handler.
-      */
-      event.stopPropagation();
+  // The game listens for pointerdown, so stop that event here too.
+  // Otherwise clicking the audio button also makes Ben jump / starts the game.
+  audioToggle.addEventListener("pointerdown", (event) => {
+    event.stopPropagation();
+  });
 
-      toggleMusic();
-    }
-  );
+  audioToggle.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    toggleMusic();
+  });
 }
 
   /* =========================================================
